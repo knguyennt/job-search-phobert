@@ -5,8 +5,11 @@ services:
       dockerfile: Dockerfile
     volumes:
       - ./frontend/webapp:/app
+      - /app/node_modules
     ports:
       - 3000:3000
+    networks:
+      - job-search-network
 
   backend:
     build:
@@ -16,3 +19,9 @@ services:
       - ./backend:/app
     ports:
       - 5001:5000
+    networks:
+      - job-search-network
+
+networks:
+  job-search-network:
+    name: job-search-network
