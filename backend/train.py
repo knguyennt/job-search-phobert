@@ -10,6 +10,14 @@ def train_job_embed():
     tokenizer = AutoTokenizer.from_pretrained(model_name)
     model = AutoModelForMaskedLM.from_pretrained(model_name)
 
+    # Freeze all layers except the last layer
+    for param in model.base_model.parameters():
+        param.requires_grad = False
+    for param in model.base_model.encoder.layer[
+        -1
+    ].parameters():  # Fine-tune only the last layer
+        param.requires_grad = True
+
     # Load your dataset from CSV
     df = pd.read_csv("./data/data.csv")  # Ensure the CSV has the specified columns
 
@@ -22,7 +30,6 @@ def train_job_embed():
     # Create a Dataset object using the new 'text' column
     dataset = Dataset.from_pandas(df[["text"]])  # Use only the combined text column
 
-
     # Function to randomly mask tokens
     def mask_tokens(inputs, mask_probability=0.15):
         labels = inputs.clone()  # Copy the input tensor
@@ -31,7 +38,6 @@ def train_job_embed():
         inputs[mask] = tokenizer.mask_token_id
         labels[~mask] = -100  # Ignore non-masked tokens in loss calculation
         return inputs, labels
-
 
     # Tokenize the dataset with labels
     def tokenize_function(examples):
@@ -54,7 +60,6 @@ def train_job_embed():
             "attention_mask": attention_mask,
             "labels": labels,
         }
-
 
     # Map the tokenization function to the dataset
     tokenized_datasets = dataset.map(tokenize_function, batched=True)
@@ -82,6 +87,7 @@ def train_job_embed():
         logging_steps=10,  # Adjusted for less frequent logging
         weight_decay=0.01,
         load_best_model_at_end=True,
+        no_cuda=False
     )
 
     # Create a Trainer instance
