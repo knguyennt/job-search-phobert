@@ -104,3 +104,4 @@ def train_job_embed():
     # Save the fine-tuned model
     trainer.save_model("./phobert-finetuned")
     tokenizer.save_pretrained("./phobert-finetuned")
+
