@@ -21,6 +21,13 @@ services:
       - 5001:5000
     networks:
       - job-search-network
+    deploy:
+      resources:
+        reservations:
+          devices:
+            - driver: nvidia
+              count: 1
+              capabilities: [gpu]
 
 networks:
   job-search-network:

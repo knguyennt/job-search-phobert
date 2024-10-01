@@ -11,6 +11,8 @@ pandas = "^2.2.3"
 torch = "^2.4.1"
 transformers = {extras = ["torch"], version = "^4.45.1"}
 datasets = "^3.0.1"
+flask = "^3.0.3"
+scikit-learn = "^1.5.2"
 
 
 [build-system]

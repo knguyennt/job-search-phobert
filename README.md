@@ -1,3 +1,4 @@
+```
 my_ai_project/
 │
 ├── data/
@@ -38,3 +39,6 @@ my_ai_project/
 ├── docker-compose.yml       # Docker Compose file
 ├── tests/                  # Unit and integration tests
 └── README.md               # Project documentation
+```
+
+To allow training via docker have access to gpu follow the instruction here: https://docs.docker.com/compose/how-tos/gpu-support/
