@@ -6,9 +6,16 @@ import numpy as np
 
 def train_job_embed():
     # Load PhoBERT model and tokenizer
-    model_name = "vinai/phobert-base-v2"
-    tokenizer = AutoTokenizer.from_pretrained(model_name)
-    model = AutoModelForMaskedLM.from_pretrained(model_name)
+    default_model_name = "vinai/phobert-base-v2"
+    model_name = "./phobert-finetuned"
+    try:
+        tokenizer = AutoTokenizer.from_pretrained(model_name)
+        model = AutoModelForMaskedLM.from_pretrained(model_name)
+    except:
+        tokenizer = AutoTokenizer.from_pretrained(default_model_name)
+        model = AutoModelForMaskedLM.from_pretrained(default_model_name)
+
+    
 
     # Freeze all layers except the last layer
     for param in model.base_model.parameters():
@@ -19,13 +26,16 @@ def train_job_embed():
         param.requires_grad = True
 
     # Load your dataset from CSV
-    df = pd.read_csv("./data/data.csv")  # Ensure the CSV has the specified columns
+    df = pd.read_csv("./data/data2.csv")  # Ensure the CSV has the specified columns
 
     # Combine relevant fields into a single text column
     df["text"] = df.apply(
-        lambda x: f"{x['title']} {x['description']} {x['salary']} {x['company']} {x['location']}",
+        lambda x: f"{x['title']} {x['description']} {x['salary']} {x['company']} {x['location']} {x['city']} {x['experience']} {x['requirements']} {x['benefits']} {x['deadline']}",
         axis=1,
     )
+
+    max_combined_length = 512  # Adjust this based on your model's max length
+    df["text"] = df["text"].apply(lambda x: x[:max_combined_length])
 
     # Create a Dataset object using the new 'text' column
     dataset = Dataset.from_pandas(df[["text"]])  # Use only the combined text column

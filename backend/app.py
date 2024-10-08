@@ -2,11 +2,11 @@ from flask import Flask, request
 from train import train_job_embed
 from infer import infer_result
 from transformers import AutoModel, AutoTokenizer
+from utils import read_json_file, preprocess_data
 import sys
 
 app = Flask(__name__)
 
-# Load PhoBERT model and tokenizer
 try:
     model = "./phobert-finetuned"
     phobert = AutoModel.from_pretrained(model)
@@ -16,13 +16,11 @@ except:
     phobert = AutoModel.from_pretrained(model)
     tokenizer = AutoTokenizer.from_pretrained(model)
 
-@app.route("/")
-def hello_world():
-    return "<p>Hello, World!</p>"
-
 
 @app.route("/ai-core/train")
 def train():
+    data = read_json_file("./data/data.json")
+    job_df = preprocess_data(data)
     train_job_embed()
 
     return "<p>Train complete</p>"

@@ -14,8 +14,8 @@ def infer_result(query, phobert, tokenizer):
 
 
     def encode_job(job):
-        combined_text = f"{job['title']} {job['description']} {job['salary']} {job['company']} {job['location']}"
-        return encode_text(combined_text)
+        combined_text = f"{job['title']} {job['location']} {job['salary']} {job['company']} {job['description']}"
+        return encode_text(combined_text[:512])
 
 
     def find_top_matches(user_query, job_list, top_n=10):
@@ -31,7 +31,7 @@ def infer_result(query, phobert, tokenizer):
 
 
     # Read job listings from CSV
-    job_list_df = pd.read_csv("./data/data.csv")  # Ensure the CSV has appropriate columns
+    job_list_df = pd.read_csv("./data/data2.csv")  # Ensure the CSV has appropriate columns
     job_list = job_list_df.to_dict(orient="records")
 
     # Find the top job matches
