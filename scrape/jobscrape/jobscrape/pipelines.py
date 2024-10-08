@@ -6,8 +6,24 @@
 
 # useful for handling different item types with a single interface
 from itemadapter import ItemAdapter
+import json
 
 
 class JobscrapePipeline:
     def process_item(self, item, spider):
+        return item
+
+
+class JsonWriterPipeline:
+    def __init__(self):
+        self.file = open("jobs.json", "w")
+        self.file.write("[\n")  # Start JSON array
+
+    def close_spider(self, spider):
+        self.file.write("\n]")  # Close JSON array
+        self.file.close()
+
+    def process_item(self, item, spider):
+        line = json.dumps(dict(item)) + ",\n"  # Convert item to JSON and add a comma
+        self.file.write(line)
         return item

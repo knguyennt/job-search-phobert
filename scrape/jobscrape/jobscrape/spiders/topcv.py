@@ -5,29 +5,22 @@ class TopcvSpider(scrapy.Spider):
     name = "topcv"
     allowed_domains = ["topcv.vn"]
     start_urls = ["https://www.topcv.vn/viec-lam-it?page=1"]
+    page_limit = 2
 
     def parse(self, response):
         # Extract the items on the page
-        items = response.xpath(
-            '//div[contains(@class, "job-item-2")]'
-        )  # Update this selector
-        print(items[1])
-        for item in items:
-            detail_url = item.xpath(
-                "//div[@class='title-block']//a/@href"
-            ).get()  # Update this selector
-            # print("detail: ", detail_url)
-            if detail_url:
-                yield response.follow(detail_url, self.parse_item)
+        product_links = response.xpath(
+            '//div[contains(@class, "job-item-2")]//h3[contains(@class, "title")]//a//@href'
+        ).getall()
+        for link in product_links:
+            yield response.follow(link, callback=self.parse_item)
 
         # Handle pagination
         current_page = int(response.url.split("page=")[-1])
-        if current_page < 2:
+        if current_page < self.page_limit:
             next_page = current_page + 1
-            yield scrapy.Request(
-                url=f"https://www.topcv.vn/viec-lam-it?page={next_page}",
-                callback=self.parse,
-            )
+            next_page_url = f"https://www.topcv.vn/viec-lam-it?page={next_page}"
+            yield scrapy.Request(next_page_url, callback=self.parse)
 
     def parse_item(self, response):
         yield {
