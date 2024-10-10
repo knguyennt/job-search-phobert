@@ -14,6 +14,7 @@ datasets = "^3.0.1"
 flask = "^3.0.3"
 scikit-learn = "^1.5.2"
 bs4 = "^0.0.2"
+elasticsearch = "^8.15.1"
 
 
 [build-system]
