@@ -1,3 +1,5 @@
 *.env
 *-finetuned/
 __pycache__/
+*.json
+*.csv

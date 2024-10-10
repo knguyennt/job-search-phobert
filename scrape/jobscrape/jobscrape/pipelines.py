@@ -16,7 +16,7 @@ class JobscrapePipeline:
 
 class JsonWriterPipeline:
     def __init__(self):
-        self.file = open("jobs.json", "w")
+        self.file = open("jobs.json", "w", encoding="utf-8")
         self.file.write("[\n")  # Start JSON array
 
     def close_spider(self, spider):
@@ -24,6 +24,7 @@ class JsonWriterPipeline:
         self.file.close()
 
     def process_item(self, item, spider):
-        line = json.dumps(dict(item)) + ",\n"  # Convert item to JSON and add a comma
+        line = json.dumps(dict(item), ensure_ascii=False) + ",\n"  # Convert item to JSON and add a comma
         self.file.write(line)
+        self.file.flush() 
         return item

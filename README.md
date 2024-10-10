@@ -42,3 +42,42 @@ my_ai_project/
 ```
 
 To allow training via docker have access to gpu follow the instruction here: https://docs.docker.com/compose/how-tos/gpu-support/
+
+# Pre-requsite
+Poetry (package management): `pip insall poetry`
+
+Docker: https://docs.docker.com/compose/install/
+
+To install each repo (frontend, backend, scrape): cd to each repo and run `poetry install`
+
+# Scrape data
+
+Run `scrapy crawl topcv`
+
+### Field crawls
+
+[x] title
+
+[x] company
+
+[x] salary
+
+[x] city
+
+[x] experience
+
+[x] description
+
+[x] requirement
+
+[x] benefit
+
+[x] location
+
+[x] domain
+
+[x] link
+
+[x] deadline
+
+[x] updated

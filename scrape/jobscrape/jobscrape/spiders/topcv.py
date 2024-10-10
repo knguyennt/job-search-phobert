@@ -25,10 +25,15 @@ class TopcvSpider(scrapy.Spider):
     def parse_item(self, response):
         yield {
             "title": response.xpath('//h1[@class="job-detail__info--title "]//a//text()').get(),
-            "salary": response.xpath('//div[@class="job-detail__info--section-content-value"]/text()').get(),
-            # "description": response.xpath(".description-selector::text").get(),
-            # "company": response.css(".description-selector::text").get(),
-            # "location": response.css(".description-selector::text").get(),
-            # "requirements": response.css(".description-selector::text").get(),
-            # "benefits": response.css(".description-selector::text").get(),
+            "company": response.xpath('//h2[@class="company-name-label"]/a/text()').get(),
+            "salary": response.xpath('//div[@class="job-detail__info--section-content-value"]/text()')[0].get(),
+            "city": response.xpath('//div[@class="job-detail__info--section-content-value"]/text()')[1].get(),
+            "experience": response.xpath('//div[@class="job-detail__info--section-content-value"]/text()')[2].get(),
+            "description": response.xpath('(//div[@class="job-description__item--content"])[1]//ul//li').getall(),
+            "requirement": response.xpath('(//div[@class="job-description__item--content"])[2]//ul//li').getall(),
+            "benefit": response.xpath('(//div[@class="job-description__item--content"])[3]//ul//li').getall(),
+            "location": response.xpath('(//div[@class="job-description__item--content"])[4]/div/text()').get(),
+            "domain": "topcv",
+            "link": response.url,
+            "deadline": response.xpath('//div[@class="job-detail__information-detail--actions-label"]/text()').get(),
         }
