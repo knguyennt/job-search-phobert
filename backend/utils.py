@@ -45,7 +45,7 @@ def preprocess_data(data):
 
 
 def combine_job_string(job):
-    combined_text = f"{job['title']} {job['location']} {job['salary']} {job['company']} {job['description']}"
+    combined_text = f"{job['title']} {job['location']} {job['salary']}"
     return combined_text
 
 def encode_job(model, tokenizer, job_text):

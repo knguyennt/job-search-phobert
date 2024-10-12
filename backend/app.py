@@ -59,20 +59,29 @@ def insert_job():
                 "deadline": row['deadline']
             }
             job_text = combine_job_string(job_object)
-            job_embed = encode_job(phobert, tokenizer, job_text[:512])
-            job_object["embedding"] = job_embed
+            job_embed = encode_job(phobert, tokenizer, job_text[:200])
+            job_embed_list = job_embed.detach().numpy().flatten().tolist()
+            job_object["embedding"] = job_embed_list
 
             add_job(es, job_object)
 
         return "Embed success"
-    except:
-        return "Embed error"
+    except Exception as e:
+        print(f"Error adding job: {e}")
+
+        return "Error"
     finally:
         es.close()
 
 
-
-@app.route("/ai-core/search-job")
+@app.route("/ai-core/search-job", methods=['POST'])
 def search_job():
+    es = Elasticsearch(["http://es-container:9200"])
+    json_data = request.get_json()
 
-    return "Search result"
+    job_embed = encode_job(phobert, tokenizer, json_data["query"][:512])
+    job_embed_list = job_embed.detach().numpy().flatten().tolist()
+    result = search_jobs_by_embedding(es, job_embed_list)
+    es.close()
+
+    return {"result": result}

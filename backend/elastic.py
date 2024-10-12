@@ -51,34 +51,40 @@ def generate_embedding(text):
 def add_job(es,job):
     # embedding = generate_embedding(description)  # Generate embedding from description
     job_doc = {
-        "title": job["title"],
-        "company": job["company"],
-        "location": job["location"],
-        "description": job["description"],
-        "posted_date": job["deadline"],
-        "embedding": generate_embedding(job["description"]),
-        "requirements": job["requirements"]
+        "title": job["title"],  # maps to "title"
+        "company": job["company"],  # maps to "company"
+        "salary": job.get("salary", ""),  # maps to "salary", default to empty if missing
+        "city": job.get("city", ""),  # maps to "city", default to empty if missing
+        "experience": job.get("experience", ""),  # maps to "experience", default to empty if missing
+        "location": job["location"],  # maps to "location"
+        "description": job["description"],  # maps to "description"
+        "requirements": job["requirements"],  # maps to "requirements"
+        "benefits": job.get("benefits", ""),  # maps to "benefits", default to empty if missing
+        "link": job.get("link", ""),  # maps to "link", default to empty if missing
+        "posted_date": job["deadline"],  # maps to "deadline"
+        "embedding": job["embedding"],  # maps to "embedding"
     }
     try:
         es.index(index=index_name, document=job_doc)
-        print(f"Job added: {title} at {company}")
     except Exception as e:
         print(f"Error adding job: {e}")
 
-def search_jobs_by_embedding(input_embedding, top_k=5):
+def search_jobs_by_embedding(es, input_embedding, top_k=5):
     # Normalize the input embedding
-    input_embedding = np.array(input_embedding).tolist()  # Ensure it is a list
 
     # Construct the search query using cosine similarity
     query = {
         "size": top_k,
+        "_source": {
+            "excludes": ["embedding"]
+        },
         "query": {
             "script_score": {
                 "query": {
                     "match_all": {}
                 },
                 "script": {
-                    "source": "cosineSimilarity(params.input_vector, doc['embedding']) + 1.0",
+                    "source": "cosineSimilarity(params.input_vector, 'embedding') + 1.0",
                     "params": {
                         "input_vector": input_embedding
                     }
