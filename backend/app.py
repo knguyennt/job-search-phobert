@@ -4,6 +4,8 @@ from infer import infer_result
 from transformers import AutoModel, AutoTokenizer
 from utils import read_json_file, preprocess_data, combine_job_string, encode_job
 from elastic import create_index, add_job, search_jobs_by_embedding
+from elasticsearch import Elasticsearch
+import numpy as np
 import sys
 
 app = Flask(__name__)
@@ -35,33 +37,39 @@ def infer():
 
 @app.route("/ai-core/insert-job") 
 def insert_job():
-    create_index()
-    
-    data = read_json_file("./data/data.json")
-    job_df = preprocess_data(data)
+    es = Elasticsearch(["http://es-container:9200"])
+    try:
+        create_index(es)
 
-    for index, row in job_df.iterrows():
-        job_object = {
-            "title": row['title'],
-            "company": row['company'],
-            "salary": row['salary'],
-            "city": row['city'],
-            "experience": row['experience'],
-            "description": row['description'],
-            "requirements": row['requirements'],
-            "benefits": row['benefits'],
-            "location": row['location'],
-            "link": row['link'],
-            "deadline": row['deadline']
-        }
-        job_text = combine_job_string(job_object)
-        job_embed = encode_job(phobert, tokenizer, job_text[:512])
-        job_object["embedding"] = job_embed
+        data = read_json_file("./data/data.json")
+        job_df = preprocess_data(data)
 
-        add_job(job_object)
+        for index, row in job_df.iterrows():
+            job_object = {
+                "title": row['title'],
+                "company": row['company'],
+                "salary": row['salary'],
+                "city": row['city'],
+                "experience": row['experience'],
+                "description": row['description'],
+                "requirements": row['requirements'],
+                "benefits": row['benefits'],
+                "location": row['location'],
+                "link": row['link'],
+                "deadline": row['deadline']
+            }
+            job_text = combine_job_string(job_object)
+            job_embed = encode_job(phobert, tokenizer, job_text[:512])
+            job_object["embedding"] = job_embed
 
+            add_job(es, job_object)
 
-    return "Embed success"
+        return "Embed success"
+    except:
+        return "Embed error"
+    finally:
+        es.close()
+
 
 
 @app.route("/ai-core/search-job")

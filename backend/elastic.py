@@ -25,13 +25,13 @@ index_settings = {
             "location": {"type": "text"},
             "link": {"type": "text"},
             "deadline": {"type": "date"},
-            "embedding": {"type": "dense_vector", "dims": 512}  # Adjust dims based on your model
+            "embedding": {"type": "dense_vector", "dims": 768}  # Adjust dims based on your model
         }
     }
 }
 
 # Function to create the index if it does not exist
-def create_index():
+def create_index(es):
     try:
         if not es.indices.exists(index=index_name):
             es.indices.create(index=index_name, body=index_settings)
@@ -48,7 +48,7 @@ def generate_embedding(text):
     return np.random.rand(768).tolist()  # Adjust dimensions accordingly
 
 # Function to add a job posting with embeddings
-def add_job(job):
+def add_job(es,job):
     # embedding = generate_embedding(description)  # Generate embedding from description
     job_doc = {
         "title": job["title"],
@@ -95,6 +95,9 @@ def search_jobs_by_embedding(input_embedding, top_k=5):
         return []
 
 # if __name__ == "__main__":
+#     es = Elasticsearch(["http://localhost:9200"]) 
+#     create_index(es)
+#     es.close()
 #     # Create the index if it doesn't exist
 #     create_index()
 
