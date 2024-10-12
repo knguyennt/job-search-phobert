@@ -24,7 +24,7 @@ except:
 def train():
     data = read_json_file("./data/data.json")
     job_df = preprocess_data(data)
-    train_job_embed()
+    train_job_embed(job_df)
 
     return "<p>Train complete</p>"
 
