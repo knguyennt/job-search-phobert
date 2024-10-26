@@ -1,6 +1,7 @@
 import json
 from bs4 import BeautifulSoup
 import pandas as pd
+import torch
 
 def read_json_file(file_path):
     with open(file_path, 'r', encoding='utf-8') as file:
@@ -43,9 +44,18 @@ def preprocess_data(data):
     return pd.DataFrame(processed_jobs)
 
 
-# # Run preprocessing
-# data = read_json_file('test.json')
-# df = preprocess_data(data)
+def combine_job_string(job):
+    combined_text = f"{job['title']} {job['location']} {job['salary']}"
+    return combined_text
 
-# # Check the preprocessed DataFrame
-# df.to_csv("data1.csv", index=False)
+def encode_job(model, tokenizer, job_text):
+    inputs = tokenizer(
+        job_text, return_tensors="pt", truncation=True, padding=True, max_length=512
+    )
+    with torch.no_grad():
+        outputs = model(**inputs)
+    return outputs.last_hidden_state.mean(dim=1)
+
+def elastic_save_job(job, job_embedding):
+
+    pass

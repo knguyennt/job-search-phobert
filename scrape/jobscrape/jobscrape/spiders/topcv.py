@@ -4,8 +4,8 @@ import scrapy
 class TopcvSpider(scrapy.Spider):
     name = "topcv"
     allowed_domains = ["topcv.vn"]
-    start_urls = ["https://www.topcv.vn/viec-lam-it?page=1"]
-    page_limit = 2
+    start_urls = ["https://www.topcv.vn/viec-lam-it?page=20"]
+    page_limit = 50
 
     def parse(self, response):
         # Extract the items on the page

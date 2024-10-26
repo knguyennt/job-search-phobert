@@ -29,6 +29,20 @@ services:
               count: 1
               capabilities: [gpu]
 
+  elasticsearch:
+    container_name: es-container
+    image: docker.elastic.co/elasticsearch/elasticsearch:8.14.3
+    environment:
+      - xpack.security.enabled=false
+      - "discovery.type=single-node"
+      - "ES_JAVA_OPTS=-Xms1024m -Xmx1024m"
+    ports:
+      - 9200:9200
+    volumes:
+      - ./esdata:/usr/share/elasticsearch/data
+    networks:
+      - job-search-network
+
 networks:
   job-search-network:
     name: job-search-network

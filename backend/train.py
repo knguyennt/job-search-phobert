@@ -4,7 +4,7 @@ from transformers import AutoModelForMaskedLM, AutoTokenizer, Trainer, TrainingA
 from datasets import Dataset, DatasetDict
 import numpy as np
 
-def train_job_embed():
+def train_job_embed(df):
     # Load PhoBERT model and tokenizer
     default_model_name = "vinai/phobert-base-v2"
     model_name = "./phobert-finetuned"
@@ -26,15 +26,15 @@ def train_job_embed():
         param.requires_grad = True
 
     # Load your dataset from CSV
-    df = pd.read_csv("./data/data2.csv")  # Ensure the CSV has the specified columns
+    # df = pd.read_csv("./data/data2.csv")  # Ensure the CSV has the specified columns
 
     # Combine relevant fields into a single text column
     df["text"] = df.apply(
-        lambda x: f"{x['title']} {x['description']} {x['salary']} {x['company']} {x['location']} {x['city']} {x['experience']} {x['requirements']} {x['benefits']} {x['deadline']}",
+        lambda x: f"{x['title']} {x['salary']} {x['company']} {x['location']} {x['city']} {x['experience']} {x['requirements']}",
         axis=1,
     )
 
-    max_combined_length = 512  # Adjust this based on your model's max length
+    max_combined_length = 200  # Adjust this based on your model's max length
     df["text"] = df["text"].apply(lambda x: x[:max_combined_length])
 
     # Create a Dataset object using the new 'text' column
