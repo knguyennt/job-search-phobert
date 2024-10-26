@@ -99,19 +99,3 @@ def search_jobs_by_embedding(es, input_embedding, top_k=5):
     except Exception as e:
         print(f"Error searching for jobs: {e}")
         return []
-
-# if __name__ == "__main__":
-#     es = Elasticsearch(["http://localhost:9200"]) 
-#     create_index(es)
-#     es.close()
-#     # Create the index if it doesn't exist
-#     create_index()
-
-#     # Add a job posting example
-#     add_job(
-#         title="Software Engineer",
-#         company="Tech Corp",
-#         location="New York, NY",
-#         description="Develop and maintain software applications.",
-#         posted_date="2024-10-01"
-#     )
