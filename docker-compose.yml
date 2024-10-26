@@ -4,12 +4,12 @@ services:
       context: ./frontend
       dockerfile: Dockerfile
     volumes:
-      - ./frontend/webapp:/app
-      - /app/node_modules
+    - ./frontend/webapp:/app
+    - /app/node_modules
     ports:
-      - 3000:3000
+    - 3000:3000
     networks:
-      - job-search-network
+    - job-search-network
 
   backend:
     build:
@@ -42,6 +42,29 @@ services:
       - ./esdata:/usr/share/elasticsearch/data
     networks:
       - job-search-network
+
+  metabase:
+    container_name: metabase
+    image: metabase/metabase
+    ports:
+      - 3001:3000
+    volumes:
+      - /metabase
+    networks:
+      - job-search-network
+  
+  mongodb-primary:
+    image: docker.io/bitnami/mongodb:7.0
+    hostname: mongodb-primary
+    environment:
+      - MONGODB_ROOT_PASSWORD=password123
+    volumes:
+      - /bitnami/mongodb
+    ports:
+      - 27017:27017
+    networks:
+      - job-search-network
+
 
 networks:
   job-search-network:
